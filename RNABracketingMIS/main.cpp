@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     
     // this version is to iterate with different parameters from GLobalParams
     GlobalIterator iter(G);
-    int iterations = 20;
+    int iterations = 10;
     iter.startIterations( iterations);
     VVI seqOfMaxIS = iter.getBestAnswer();
     

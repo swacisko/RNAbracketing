@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH -n16
+
+#SBATCH -N1
+#SBATCH -p plgrid
+#SBATCH -J WINDOW_SIZE
+#SBATCH --get-user-env
+#SBATCH -o window_size.out # STDOUT   
+#SBATCH -e window_size.err # STDERR       
+
+
+#module load /plgrid/apps/cuda/8.0.61
+
+
+for d in ./with-h/*/input.bpseq;
+do
+	./rnabracketingmis < $d > $d.upa
+done
+
+
+for d in ./without-h/*/input.bpseq;
+do
+	./rnabracketingmis < $d > $d.upa
+done
