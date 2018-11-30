@@ -36,8 +36,10 @@ public:
      */
     VI readInput();
     
+    string getInputSequence(){ return inputSequence; }
+    
 private:
-
+    string inputSequence;
 };
 
 #endif /* INPUTREADER_H */

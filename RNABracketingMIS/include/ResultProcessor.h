@@ -29,12 +29,12 @@ public:
     virtual ~ResultProcessor();
     
     void clear();
-    VI getAnswer();
+    string getAnswer();
     
 private:
     VI ends;
     VVI sequenceOfMaxIS;
-    vector< pair<int,int> > brackets;
+    vector< pair<char,char> > brackets;
 
     void createBrackets();
 };

@@ -36,16 +36,25 @@ void ResultProcessor::clear() {
 
 
 void ResultProcessor::createBrackets() {
-    for( int i=1; i<=5; i++ ){
+    
+    brackets.push_back({ '(',')' });
+    brackets.push_back({ '[',']' });
+    brackets.push_back({ '{','}' });
+    brackets.push_back({ '<','>' });
+    for( int i=0; i<25; i++ ){
+        brackets.push_back({ (char)( 'A' + i ), (char)('a'+i) });
+    }
+    
+    /*for( int i=1; i<=5; i++ ){
         for( int k=i+1; k<=9; k++ ){
             brackets.push_back( pair<int,int>( 10*i+k, 10*k+i ) );
         }
-    }
+    }*/
 }
 
 
-VI ResultProcessor::getAnswer() {
-    VI res( ends.size(),0 );    
+string ResultProcessor::getAnswer() {
+    string res( ends.size(), 'X' );    
     
     int p = 0;
     for( int i=0; i<ends.size(); i++ ){

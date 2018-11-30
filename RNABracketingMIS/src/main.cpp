@@ -58,13 +58,13 @@ int main(int argc, char** argv) {
     
     // this version is to iterate with different parameters from GLobalParams
     GlobalIterator iter(G);
-    int iterations = 10;
+    int iterations = 20;
     iter.startIterations( iterations);
     VVI seqOfMaxIS = iter.getBestAnswer();
     
     ResultProcessor resproc( ends, seqOfMaxIS );
     
-    VI ans = resproc.getAnswer();
+    string ans = resproc.getAnswer();
     
     
     cout << endl << endl << endl;  
@@ -79,7 +79,9 @@ int main(int argc, char** argv) {
         cerr << endl << "RESULT NOT CORRECT" << endl << endl;
     }
     
-    for( int a : ans ) cout << a << " "; cout << endl;
+   // for( int a : ans ) cout << a << " "; cout << endl;
+    cout << reader.getInputSequence() << endl;
+    cout << ans << endl;
     
     
     return 0;

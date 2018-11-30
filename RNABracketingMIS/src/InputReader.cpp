@@ -37,6 +37,7 @@ VI InputReader::readInput() {
         V.push_back(0);
         while( cin >> a ){
             cin >> s >> a;
+            inputSequence += s;
             V.push_back(a);
         }
     }
