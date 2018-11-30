@@ -1,3 +1,0 @@
-/home/sylwester/Documents/PhD/RNAbrackets/RNABracketingMIS/CMakeFiles/rebuild_cache.dir
-/home/sylwester/Documents/PhD/RNAbrackets/RNABracketingMIS/CMakeFiles/RNABracketing.dir
-/home/sylwester/Documents/PhD/RNAbrackets/RNABracketingMIS/CMakeFiles/edit_cache.dir
