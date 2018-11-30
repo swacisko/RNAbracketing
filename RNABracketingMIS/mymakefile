@@ -1,0 +1,39 @@
+rm -r build/
+rmdir build/
+mkdir -p build/Debug/GNU-Linux
+
+g++ -std=c++11 build/Debug/GNU-Linux/DisjointComponentMerger.o -o build/Debug/GNU-Linux/DisjointComponentMerger.o DisjointComponentMerger.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/GlobalIterator.o -o build/Debug/GNU-Linux/GlobalIterator.o GlobalIterator.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/GlobalParams.o -o build/Debug/GNU-Linux/GlobalParams.o GlobalParams.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/Graph.o -o build/Debug/GNU-Linux/Graph.o Graph.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/GraphConnectedComponents.o -o build/Debug/GNU-Linux/GraphConnectedComponents.o GraphConnectedComponents.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/InputProcessor.o -o build/Debug/GNU-Linux/InputProcessor.o InputProcessor.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/InputReader.o -o build/Debug/GNU-Linux/InputReader.o InputReader.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/IterationController.o -o build/Debug/GNU-Linux/IterationController.o IterationController.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/IterationGraph.o -o build/Debug/GNU-Linux/IterationGraph.o IterationGraph.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/MIS.o -o build/Debug/GNU-Linux/MIS.o MIS.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/MISNodes.o -o build/Debug/GNU-Linux/MISNodes.o MISNodes.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/Makros.o -o build/Debug/GNU-Linux/Makros.o Makros.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/RandomBracketingGenerator.o -o build/Debug/GNU-Linux/RandomBracketingGenerator.o RandomBracketingGenerator.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/ResultProcessor.o -o build/Debug/GNU-Linux/ResultProcessor.o ResultProcessor.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/ResultTester.o -o build/Debug/GNU-Linux/ResultTester.o ResultTester.cpp
+
+g++ -std=c++11 build/Debug/GNU-Linux/main.o -o build/Debug/GNU-Linux/main.o main.cpp
+
+mkdir -p dist/Debug/GNU-Linux
+
+g++ -std=c++11 -o dist/Debug/GNU-Linux/rnabracketingmis build/Debug/GNU-Linux/DisjointComponentMerger.o build/Debug/GNU-Linux/GlobalIterator.o build/Debug/GNU-Linux/GlobalParams.o build/Debug/GNU-Linux/Graph.o build/Debug/GNU-Linux/GraphConnectedComponents.o build/Debug/GNU-Linux/InputProcessor.o build/Debug/GNU-Linux/InputReader.o build/Debug/GNU-Linux/IterationController.o build/Debug/GNU-Linux/IterationGraph.o build/Debug/GNU-Linux/MIS.o build/Debug/GNU-Linux/MISNodes.o build/Debug/GNU-Linux/Makros.o build/Debug/GNU-Linux/RandomBracketingGenerator.o build/Debug/GNU-Linux/ResultProcessor.o build/Debug/GNU-Linux/ResultTester.o build/Debug/GNU-Linux/main.o 
