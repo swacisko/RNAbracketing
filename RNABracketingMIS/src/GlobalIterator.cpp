@@ -19,6 +19,7 @@
 GlobalIterator::GlobalIterator(Graph & G) {
     this->G = &G;
     createConnectedComponents();
+    int a = 4;
 }
 
 GlobalIterator::GlobalIterator(const GlobalIterator& orig) {
