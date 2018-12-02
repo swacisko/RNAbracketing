@@ -41,7 +41,6 @@ int GlobalParams::SEARCHES_PER_ITERATION_GEN2 = GlobalParams::INITIAL_SEARCHES_P
  */
 int main(int argc, char** argv) {
     
-    
    // srand( unsigned(time(0)) );
     InputReader reader;
     VI ends = reader.readInput();
