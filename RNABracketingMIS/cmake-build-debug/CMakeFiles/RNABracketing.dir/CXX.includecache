@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/Graph.h
+iostream
+-
+vector
+-
+
+../include/ResultTester.h
+Graph.h
+../include/Graph.h
+set
+-
+map
+-
+
+/home/sylwester/Documents/PhD/RNAbrackets/RNABracketingMIS/src/ResultTester.cpp
+ResultTester.h
+-
+algorithm
+-
+ResultTester.h
+/home/sylwester/Documents/PhD/RNAbrackets/RNABracketingMIS/src/ResultTester.h
+

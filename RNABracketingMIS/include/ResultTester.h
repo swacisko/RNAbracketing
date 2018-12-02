@@ -17,6 +17,7 @@
 
 #include "Graph.h"
 #include<set>
+#include <map>
 
 class ResultTester {
 public:
@@ -24,6 +25,10 @@ public:
     ResultTester(const ResultTester& orig);
     virtual ~ResultTester();
     bool isCorrect( Graph & G, VVI & brackets );
+
+    map<char,int> getStatsForString( string s );
+
+    void testSolution();
 private:
 
 };

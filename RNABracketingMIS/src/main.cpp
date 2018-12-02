@@ -40,7 +40,12 @@ int GlobalParams::SEARCHES_PER_ITERATION_GEN2 = GlobalParams::INITIAL_SEARCHES_P
  * 
  */
 int main(int argc, char** argv) {
-    
+
+    ResultTester tester;
+    tester.testSolution();
+    return 0;
+
+
    // srand( unsigned(time(0)) );
     InputReader reader;
     VI ends = reader.readInput();
