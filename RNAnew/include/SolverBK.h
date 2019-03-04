@@ -6,6 +6,8 @@
 #define GENOMEALIGNMENT_SOLVERBK_H
 
 
+#include <set>
+#include <unordered_set>
 #include "GraphBit.h"
 
 typedef vector<int> VI;
@@ -18,15 +20,28 @@ public:
 
     VVI solve( GraphBit  g ){
         static int layer = 0;
-//        cerr << endl << "g in solve:" << endl;
+
+//        if( !g.isChordal() ){
+//            g.write();
+//            exit(1);
+//        }
+
 //        g.write();
+
+//        cerr << "Nodes with at least two leaves: " << endl; for(int p : g.getNodesWithAtLeastTwoLeafNeighbors().getAllSetBits()) cerr << p << " "; cerr << endl;
+//        Bitset fL(g.vertices.size());
+//
+//        addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer(g,fL);
+//        cerr << "first layer: " << endl; for(int p : fL.getAllSetBits()) cerr << p << " "; cerr << endl;
+//        cerr << "there are " << fL.count() << " nodes out of " << g.vertices.count() << " sure in the first layer" << endl;
+//        exit(1);
+
         if( g.vertices.count() == 0 ) return VVI();
         if( g.vertices.count() == 1 ) return VVI( 1, VI(1,g.vertices.lower_bound(0)) );
 
         layer++;
-//        g.makeComplement();
-
 //
+
 
         vector<Bitset> components = g.getConnectedComponents();
 
@@ -77,7 +92,7 @@ public:
 //            for(auto a : test) cerr << a << " "; cerr << endl;
 
             GraphBit g2 = g;
-            VI remapper = g2.induce( comp, false /*g2.vertices.count() > 62 && comp.count() <= 62*/ );
+            VI remapper = g2.induce( comp, /*false*/ g2.vertices.count() > maxSmallCompSize && comp.count() <= maxSmallCompSize );
 
             if( comp.count() > maxSmallCompSize ){
                 for(int i=0; i<layer;i++) cerr << "\t";
@@ -102,25 +117,42 @@ public:
             if( g2.vertices.count() == 0 ) bestAnsPerComp = VVI();
             else if( g2.vertices.count() == 1 ) bestAnsPerComp = VVI( 1, VI(1,g2.vertices.lower_bound(0)) );
             else{
-//                if( g2.vertices.count() > maxSmallCompSize ){
-//                    Bitset inters = calculateRandomMisIntersection(g2, 10 * g2.vertices.count() );
-//
-//                    cerr << "found maximal MIS intersection of size " << inters.count() << endl;
-//
-//
-//                    for (int u = inters.lower_bound(0); u != Bitset::INF; u = inters.lower_bound(u+1)) {
-//                        cur.set(u,1);
-//                        allowed &= g2[u];
-//                        forbidden &= g2[u];
-//                    }
-//                    currentMax = inters.count();
-//                }
+                /*if( g2.vertices.count() > maxSmallCompSize ){
+                    Bitset inters = calculateRandomMisIntersection(g2, 10 * g2.vertices.count() );
 
+                    cerr << "found maximal MIS intersection of size " << inters.count() << endl;
+
+
+                    for (int u = inters.lower_bound(0); u != Bitset::INF; u = inters.lower_bound(u+1)) {
+                        cur.set(u,1);
+                        allowed &= g2[u];
+                        forbidden &= g2[u];
+                    }
+                    currentMax = inters.count();
+                    exit(1);
+                }*/
                 if(g2.vertices.count() > maxSmallCompSize){
-                    bestAnsPerComp = solveByHybrid(g2, 30 * g2.vertices.count() );
+                    Bitset fL(g2.vertices.size());
+                    addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer(g2,fL);
+                    VI colors(g2.vertices.size(),-1);
+//                    for( int p : fL.getAllSetBits() ) colors[p] = 0;
+                    int iter = 10000000;
+                    Bitset inducer = fL;
+
+
+                    Bitset inters = calculateRandomMisIntersection(g2, iter / g2.vertices.count() );
+                    inducer |= inters;
+//                    for( int p : g2.vertices.getAllSetBits() ){
+//                        if( (g2.V[p] & inters).count() > 0 ) inducer.set(p,1);
+//                    }
+
+                    cerr << "fL.count() = " << fL.count() << "   inducer.count() = " << inducer.count() << "    inters.count() = " << inters.count() << endl;
+                    for( int p : inducer.getAllSetBits() ) colors[p] = 0;
+
+                    bestAnsPerComp = solveByHybrid(g2, iter / g2.vertices.count(), colors );
                     VI firstLayer = bestAnsPerComp[0];
                     cerr << "found first layer with " << firstLayer.size() << " nodes" << endl;
-                    Bitset fL(g2.vertices.size());
+                    fL = Bitset(g2.vertices.size());
                     for(int p : firstLayer) fL.set(p,1);
                     fL = g.vertices & ~fL;
                     g2.induce( fL, false );
@@ -273,6 +305,7 @@ public:
         inters.set( 0, inters.size()-1,1 );
 
         int M = 0;
+        set<Bitset> differentMISs;
         VI perm = g.vertices.getAllSetBits();
 
         for(int i=0; i<iterations; i++){
@@ -281,10 +314,17 @@ public:
             if( b.count() > M ){
                 inters.set( 0, inters.size()-1,1 );
                 M = b.count();
+                differentMISs.clear();
             }
 
-            if( b.count() == M ) inters &= b;
+            if( b.count() == M ){
+                inters &= b;
+                differentMISs.insert(b);
+            }
         }
+
+        cerr << "there are at least " << differentMISs.size() << " different MIS's of size " << M << endl;
+        cerr << "found maximal MIS intersection of size " << inters.count() << endl;
         return inters;
 
     }
@@ -299,7 +339,7 @@ public:
     }
 
 
-    VVI solveByHybrid( GraphBit & g, int iterations ){
+    VVI solveByHybrid( GraphBit & g, int iterations, VI & initialColors ){
 
         VVI best(g.vertices.size()+1), temp;
         VI perm = g.vertices.getAllSetBits();
@@ -309,11 +349,14 @@ public:
         Bitset freeColors(maxColors);
 
         while(iterations--){
-            for(int p : perm) colors[p] = -1;
+//            for(int p : perm) colors[p] = -1;
+            colors = initialColors;
             random_shuffle(perm.begin(), perm.end() );
 
             int m = 0;
             for( int p : perm ){
+                if(colors[p] != -1) continue;
+
                 freeColors.set( 0, maxColors-1,1 );
                 for( int u : g[p].getAllSetBits() ){
                     if( colors[u] != -1 ) freeColors.set( colors[u] ,0);
@@ -338,6 +381,34 @@ public:
 
     }
 
+
+
+    void addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer( GraphBit g, Bitset &fL ){
+        Bitset b;
+//        cerr << "g in add fL" <<  endl;
+//        g.write();
+        Bitset leaves = g.getNodesWithDegree(1);
+        cerr << "leaves: " << endl; for(int p : leaves.getAllSetBits()) cerr << p << " "; cerr << endl;
+
+        if( ( b = g.getNodesWithAtLeastTwoLeafNeighbors() ).count() == 0 ) return;
+
+
+
+        Bitset toRemoveFromLayer = b;
+
+        for( int p : leaves.getAllSetBits() ){
+            if( b[ g.V[p].lower_bound(0) ] ){
+                toRemoveFromLayer.set( p,1 );
+                fL.set(p,1);
+            }
+        }
+
+        cerr << "removing from graph: "; for(int p : toRemoveFromLayer.getAllSetBits()) cerr << p << " "; cerr << endl; cerr << endl;
+
+        g.induce( g.vertices & ~toRemoveFromLayer, false );
+
+        addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer(g, fL);
+    }
 
 };
 

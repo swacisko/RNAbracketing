@@ -126,16 +126,19 @@ int main(int argc, char** argv) {
     string ans = resproc.getAnswer();
     
     
-    cout << endl << endl << endl;  
-    cout << "Now sizes of consequent MaxIS:" << endl;
+//    cout << endl << endl << endl;
+    cout << ">Now sizes of consequent MaxIS:  ";
     for( VI v : seqOfMaxIS ) cout << v.size() << " "; cout << endl;
 //    cerr << "Now consequent MaxIS:" << endl;
 //    WRITE2(seqOfMaxIS);
       
     
     if( !ResultTester().isCorrect(G,seqOfMaxIS) ){
-        for( int i=0; i<10; i++ ) cerr << "ERROR" << endl;
+        for( int i=0; i<10; i++ )
+            cerr << "ERROR" << endl;
+            cout << "ERROR" << endl;
         cerr << endl << "RESULT NOT CORRECT" << endl << endl;
+        cout << endl << "RESULT NOT CORRECT" << endl << endl;
     }
     
    // for( int a : ans ) cout << a << " "; cout << endl;

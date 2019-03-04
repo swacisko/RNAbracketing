@@ -458,7 +458,7 @@ string Bitset::toString() {
     return s;
 }
 
-bool Bitset::operator<(const Bitset& oth) {
+bool Bitset::operator<(const Bitset& oth) const{
     int p = blocks-1;
     int q = oth.blocks-1;
     
@@ -478,7 +478,10 @@ bool Bitset::operator<(const Bitset& oth) {
 }
 
 ostream& operator<<( ostream & str, Bitset & b ){
-    str << b.toString();
+//    str << b.toString();
+    str << "(";
+    for(int p : b.getAllSetBits()) str << p << ", ";
+    str << ")";
     return str;
 }
 

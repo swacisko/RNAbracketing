@@ -80,6 +80,7 @@ void ResultTester::testSolution() {
 
         }
     }
+    cout << endl;
 
 }
 

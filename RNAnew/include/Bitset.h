@@ -65,7 +65,7 @@ public:
     Bitset operator>>( int offset ); // translation to the left. after this V[offset] = V[0], and so on...
     Bitset& operator>>=(int offset);
         
-    bool operator<( const Bitset & oth ); // CAUTION!! THIS OPERATOR TREATS BITSET AS BINARY NUMBER WITH REPRESENTATION INVERSE TO V. So V[0] is the lest significant bit;
+    bool operator<( const Bitset & oth ) const; // CAUTION!! THIS OPERATOR TREATS BITSET AS BINARY NUMBER WITH REPRESENTATION INVERSE TO V. So V[0] is the lest significant bit;
  //   bool operator<=( const Bitset & oth );
     
     Bitset& operator=( const Bitset & oth );
