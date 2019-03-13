@@ -15,10 +15,14 @@
 
 Graph::Graph(int N) {
     V = VVI(N);
+    L = VI(N,N+1);
+    arcBeg = VI(N);
+    arcEnd = VI(N);
 }
 
 Graph::Graph(const Graph& orig) {
     V = orig.V;
+    L = orig.L;
 }
 
 Graph::~Graph() {

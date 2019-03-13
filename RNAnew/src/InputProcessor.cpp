@@ -61,6 +61,34 @@ Graph InputProcessor::processInput(VI & bracketEnds ) {
             }            
         }
     }
+
+//    cerr << "siemanko, numberOfBrackets = " << numberOfBrackets << endl;
+//    cerr << "L.size() = " << G.getL().size() << "      "; for( int p : G.getL() ) cerr << p << " "; cerr << endl;
+
+//    VI L(numberOfBrackets);
+    for(int i=0; i<N; i++){
+        if( bracketEnds[i] > i ){
+//             G.setL( bracketNumbering[i], bracketNumbering[ bracketEnds[i]-1 ]  );
+            G.arcBeg[ bracketNumbering[i] ] = i;
+            G.arcEnd[ bracketNumbering[i] ] = bracketEnds[i];
+
+            G.setL( bracketNumbering[i], bracketNumbering[i]-1  );
+
+            for( int k=i+1; k < bracketEnds[i]; k++ ){
+                if( bracketEnds[k] > k /*&& bracketEnds[k] < bracketEnds[i]*/ ){
+//                    cerr << "i = " << i << "    k = " << k << "   setting " << bracketNumbering[i] << " to " << bracketNumbering[k] << endl;
+                    G.setL( bracketNumbering[i], bracketNumbering[k]  );
+//                    break;
+//                    L[ bracketNumbering[i] ] = bracketNumbering[k];
+//                    cerr << "\tset" << endl;
+                }
+            }
+
+
+        }
+    }
+
+//    cerr << "nara" << endl;
     
    // G.push_back(VI());
   //  for( int i=0; i<G.size()-1; i++ ) G[i].push_back( G.size()-1 ); // I add extra node so that every longest path always end in this node.

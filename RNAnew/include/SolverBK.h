@@ -135,20 +135,21 @@ public:
                     Bitset fL(g2.vertices.size());
                     addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer(g2,fL);
                     VI colors(g2.vertices.size(),-1);
-//                    for( int p : fL.getAllSetBits() ) colors[p] = 0;
+                    for( int p : fL.getAllSetBits() ) colors[p] = 0;
                     int iter = 10000000;
                     Bitset inducer = fL;
 
 
-                    Bitset inters = calculateRandomMisIntersection(g2, iter / g2.vertices.count() );
+//                    Bitset inters = calculateRandomMisIntersection(g2, iter / g2.vertices.count() );
+                    Bitset inters = calculateRandomMisIntersectionByHybrid(g2, iter / g2.vertices.count(), colors );
                     inducer |= inters;
 //                    for( int p : g2.vertices.getAllSetBits() ){
 //                        if( (g2.V[p] & inters).count() > 0 ) inducer.set(p,1);
 //                    }
 
                     cerr << "fL.count() = " << fL.count() << "   inducer.count() = " << inducer.count() << "    inters.count() = " << inters.count() << endl;
-                    for( int p : inducer.getAllSetBits() ) colors[p] = 0;
 
+                    for( int p : inducer.getAllSetBits() ) colors[p] = 0;
                     bestAnsPerComp = solveByHybrid(g2, iter / g2.vertices.count(), colors );
                     VI firstLayer = bestAnsPerComp[0];
                     cerr << "found first layer with " << firstLayer.size() << " nodes" << endl;
@@ -164,7 +165,7 @@ public:
 
                 }else{
                     g2.makeComplement();
-                    bestAnsPerComp = BronKerbosch(g2,cur,allowed,forbidden,currentMax);
+                    bestAnsPerComp = BronKerbosch(g2,cur,allowed,forbidden,currentMax );
                 }
 
             }
@@ -202,7 +203,8 @@ public:
     }
 
 
-    VVI BronKerbosch( GraphBit g, Bitset cur, Bitset allowed, Bitset forbidden, int &currentMax) {
+
+    VVI BronKerbosch( GraphBit g, Bitset cur, Bitset allowed, Bitset forbidden, int &currentMax ) {
         if (allowed.count()==0 && forbidden.count()==0 && cur.count() >= currentMax) {
             currentMax = cur.count();
 
@@ -289,11 +291,35 @@ public:
 
     // returns true if a < b so if b is better solution then returns true.
     bool compareResults( VVI & a, VVI b ){
-        for( int i=0; i<min(a.size(), b.size()); i++ ){
-            if(a[i].size() < b[i].size()) return true;
-            else if( a[i].size() > b[i].size() ) return false;
+//        for( int i=0; i<min(a.size(), b.size()); i++ ){
+//            if(a[i].size() < b[i].size()) return true;
+//            else if( a[i].size() > b[i].size() ) return false;
+//        }
+//        return b.size() < a.size();
+
+
+        if( a[0].size() == 0 ) return true;
+        if( b[0].size() == 0 ) return false;
+        if( a[0].size() != b[0].size() ) return a[0].size() < b[0].size();
+
+        vector<int> weights(10,1);
+        for( int i=1; i<weights.size(); i++ ) weights[i] = (weights[i-1] << 3);
+//        for( int i=1; i<weights.size(); i++ ) weights[i] = i;
+
+        int res1 = 0;
+        for( int i=0; i<a.size(); i++ ){
+            if(i==0)res1 += a[i].size();
+            else res1 -= weights[i] * a[i].size();
         }
-        return b.size() < a.size();
+
+        int res2 = 0;
+        for( int i=0; i<b.size(); i++ ){
+            if(i==0)res2 += b[i].size();
+            else res2 -= weights[i] * b[i].size();
+        }
+
+        return res1 < res2;
+
     }
 
     /**
@@ -311,6 +337,42 @@ public:
         for(int i=0; i<iterations; i++){
             random_shuffle(perm.begin(), perm.end());
             Bitset b = getMIS(g,perm);
+            if( b.count() > M ){
+                inters.set( 0, inters.size()-1,1 );
+                M = b.count();
+                differentMISs.clear();
+            }
+
+            if( b.count() == M ){
+                inters &= b;
+                differentMISs.insert(b);
+            }
+        }
+
+        cerr << "there are at least " << differentMISs.size() << " different MIS's of size " << M << endl;
+        cerr << "found maximal MIS intersection of size " << inters.count() << endl;
+        return inters;
+
+    }
+
+    Bitset calculateRandomMisIntersectionByHybrid( GraphBit & g, int iterations, VI initialColors ){
+
+        Bitset inters(g.vertices.size());
+        inters.set( 0, inters.size()-1,1 );
+
+        int M = 0;
+        set<Bitset> differentMISs;
+        VI perm = g.vertices.getAllSetBits();
+
+        for(int i=0; i<iterations; i++){
+            random_shuffle(perm.begin(), perm.end());
+
+            VVI r = solveByHybrid( g,1,initialColors );
+            Bitset b(g.vertices.size());
+            for(int p : r[0]) b.set(p,1);
+
+//            Bitset b = getMIS(g,perm);
+
             if( b.count() > M ){
                 inters.set( 0, inters.size()-1,1 );
                 M = b.count();
@@ -409,6 +471,67 @@ public:
 
         addIterativelyNodesWithAtLeastTwoLeafNeighborsToLayer(g, fL);
     }
+
+//
+//    /**
+//     * Returns optimal value of largest MIS of agraph induced by [a,a+1,...,b]
+//     */
+//    int getOptimalMISSizeOnInterval( GraphBit & g, int a, int b, int arcA, int arcB, VVI & opt ){
+//        if(a>b || arcA > arcB) return 0;
+//        if( opt[a][b] != -1 ) return opt[a][b];
+////        cerr << "hello! a = " << a << "  b = " << b << "   g.L[" << a << "] = " << g.L[a] << endl;
+////        if( a == b ) return (opt[a][b] = g.L[a] <= b );
+////        if( g.L[a] == g.vertices.size()+1 ){
+////            cerr << "\tg.L[" << a << "] = " << g.L[a] << endl;
+////            return (opt[a][b] = 1 + getOptimalMISSizeOnInterval(g,a+1,b,opt));
+////        }
+//
+//        int res = 0;
+//        for( int i=a; i<=b; i++ ){
+//            if( g.arcBeg[i] >= arcA && g.arcEnd[i] <= arcB ){
+//                res = max(res, 1 + getOptimalMISSizeOnInterval( g,a,i-1, arcA, g.arcBeg[i]-1, opt)
+//                            + getOptimalMISSizeOnInterval( g,i+1,g.L[i], g.arcBeg[i]+1, g.arcEnd[i]-1, opt  )
+//                            + getOptimalMISSizeOnInterval( g,g.L[i]+1,b, g.arcEnd[i]+1, arcB, opt  ) );
+//            }
+//        }
+//
+////        cerr << "\treturning " << res << " as best on interval (" << a << "," << b << ")" << endl;
+//        return (opt[a][b] = res);
+//    }
+//
+//    Bitset getOptimalMISIntersectionDP( GraphBit & g ){
+//        int N = g.vertices.size();
+//        VVI opt( N, VI(N,-1) );
+//        int INF = 1000000000;
+//        int maxIS = getOptimalMISSizeOnInterval( g,0,N-1, 0, INF , opt );
+//
+//        cerr << "maxIS = " << maxIS << endl;
+//        exit(1);
+//
+//        Bitset mustBeInMaxIS(N);
+//
+//        for( int i=0; i <N; i++ ){
+//            opt = VVI( N, VI(N,-1) );
+//            int prevVal = g.L[i];
+//            g.L[i] = N+1;
+//
+//            int res2;
+//            if( (res2 = getOptimalMISSizeOnInterval( g,0,N,0,INF, opt )) != maxIS ){
+//                mustBeInMaxIS.set(i,1);
+//                cerr << "maxIS without node " << i << " = " << res2 << endl;
+//            }
+//
+//            g.L[i] = prevVal;
+//        }
+//
+//
+//        cerr << "There are " << mustBeInMaxIS.count() << " vertices that must be in MaxIS" << endl;
+//        for(int p : mustBeInMaxIS.getAllSetBits()) cerr << p << " "; cerr << endl;
+//
+//        return mustBeInMaxIS;
+//
+//    }
+
 
 };
 

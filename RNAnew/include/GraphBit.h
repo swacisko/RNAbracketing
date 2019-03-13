@@ -17,7 +17,9 @@ public:
         V = vector<Bitset>(N, Bitset(N));
         vertices = Bitset(N);
         vertices.set(0,N-1,1);
-
+        L = VI(N,N+1);
+        arcBeg = VI(N);
+        arcEnd = VI(N);
 
     }
     Bitset& operator[](int n){ return V[n]; }
@@ -181,6 +183,10 @@ public:
     vector<Bitset> V;
     Bitset vertices;
     VI componentIds;
+
+    VI L;
+    VI arcBeg;
+    VI arcEnd;
 
 };
 

@@ -94,6 +94,9 @@ int main(int argc, char** argv) {
 //    G.write();
 
     GraphBit gb(G.size());
+    gb.L = G.getL();
+    gb.arcBeg = G.arcBeg;
+    gb.arcEnd = G.arcEnd;
     for( int i=0; i<G.size(); i++ ){
         for(int k=0; k<G[i].size(); k++){
             gb[i].set( G[i][k] ,1);

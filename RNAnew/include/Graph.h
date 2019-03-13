@@ -41,10 +41,22 @@ public:
     
     void write();
     
-    
+
+    VI getL(){ return L; };
+    void setL(int ind, int val){  L[ind] = val; }
+
+    VI arcBeg;
+    VI arcEnd;
 private:
-    
+
     VVI V;
+
+    /**
+     * L[i] is the least id of a node that has its beginning after the end of i-th node or N+1 if no such node exists. This is used in DP in optimal calculations.
+     *
+     */
+    VI L;
+
 
 };
 
