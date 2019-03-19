@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH -n16
+
+#SBATCH -N1
+#SBATCH -p plgrid
+#SBATCH -J RNAbrackets
+#SBATCH --get-user-env
+#SBATCH -o window_size.out # STDOUT   
+#SBATCH -e window_size.err # STDERR       
+
+
+#module load /plgrid/apps/cuda/8.0.61
+module load plgrid/tools/gcc/4.9.3
+
+#cd RNAbracketingMIS
+#rm -r ./build/
+#make
+#cd ..
+#rm ./rnabracketingmis
+#cp RNAbracketingMIS/dist/Debug/GNU-Linux/rnabracketingmis ./rnabracketingmis
+
+for d in ./with-h/*/input.bpseq;
+do
+	./rnabracketingmis < $d > $d.upa
+done
+
+for d in ./without-h/*/input.bpseq;
+do
+	./rnabracketingmis < $d > $d.upa
+done
